@@ -240,9 +240,8 @@
 (defmulti dialect
   "Returns options compatible with a given dialect
    args: [dialect & [options]]
-     dialect: one of :github :multimarkdown :commonmark :kramdown :markdown
-     options: options map:
-       ...
+     dialect: one of :github :multimarkdown :commonmark :kramdown :markdown :multimarkdown
+     options: options map, different per dialect
    returns: MutableDataSet"
   (fn [dialect & [_]]
     dialect))
@@ -258,7 +257,7 @@
   "Configures a MutableDataSet of options according to a map of config data
    args: [opts] ; a map, keys:
      :dialect - a keyword naming a dialect. currently:
-       :commonmark :markdown :github :pegdown :kramdown
+       :commonmark :github
      :extensions - a sequence of extension maps. must have ':extension' entry.
        other keys depend on the value of that. currently support extensions:
        :abbreviation
@@ -294,9 +293,15 @@
       (configure-ext! e os))
     os))
 
-(defmethod dialect :multimarkdown
-  [_ & [opts]]
-  )
+;; (defmethod dialect :multimarkdown
+;;   [_ & [opts]]
+;;   )
+;; (defmethod dialect :markdown
+;;   [_ & [opts]]
+;;   )
+;; (defmethod dialect :kramdown
+;;   [_ & [opts]]
+;;   )
 
 (defmethod dialect :commonmark
   [_ & [opts]]
@@ -338,3 +343,10 @@
    returns: HtmlRenderer"
   [opts]
   (-> opts HtmlRenderer/builder .build))
+
+(defn render-html
+  "Renders a document to html with the given renderer
+   args: [renderer document]
+   returns: String"
+  [^HtmlRenderer html document]
+  (.render html document))
